@@ -1,0 +1,60 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<table>
+	<tr>
+		<td>
+			<table style="display: inline-block;">
+				<tr>
+					<td><input id="button_0_0" type="button" onClick="game.onButtonClick(this)"
+					           class="button_default"/></td>
+					<td><input id="button_0_1" type="button" onClick="game.onButtonClick(this)"
+					           class="button_default"/></td>
+					<td><input id="button_0_2" type="button" onClick="game.onButtonClick(this)"
+					           class="button_default"/></td>
+				</tr>
+				<tr>
+					<td><input id="button_1_0" type="button" onClick="game.onButtonClick(this)"
+					           class="button_default"/></td>
+					<td><input id="button_1_1" type="button" onClick="game.onButtonClick(this)"
+					           class="button_default"/></td>
+					<td><input id="button_1_2" type="button" onClick="game.onButtonClick(this)"
+					           class="button_default"/></td>
+				</tr>
+				<tr>
+					<td><input id="button_2_0" type="button" onClick="game.onButtonClick(this)"
+					           class="button_default"/></td>
+					<td><input id="button_2_1" type="button" onClick="game.onButtonClick(this)"
+					           class="button_default"/></td>
+					<td><input id="button_2_2" type="button" onClick="game.onButtonClick(this)"
+					           class="button_default"/></td>
+				</tr>
+			</table>
+		</td>
+		<td>
+			<table>
+				<tr>
+					<td>
+						<video id="remote_video" width="300px" height="300px"/>
+					</td>
+					<td>
+						<video id="local_video" width="300px" height="300px"/>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+<a href="javascript:onRestart();">Restart</a>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="/_ah/channel/jsapi"></script>
+<script type="text/javascript" src="util.js"></script>
+<script type="text/javascript" src="Game.js"></script>
+<script type="text/javascript" src="Media.js"></script>
+<script language="JavaScript" src="SignalingChannel.js"></script>
+<script type="text/javascript" src="main.js"></script>
+</body>
+</html>
