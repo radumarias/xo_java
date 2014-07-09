@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE web-app PUBLIC
+ "-//Oracle Corporation//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
+    <servlet>
+        <servlet-name>joinRoom</servlet-name>
+        <servlet-class>com.xor10.x0webrtc.TicTacToeServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>joinRoom</servlet-name>
+        <url-pattern>/joinRoom</url-pattern>
+    </servlet-mapping>
+
+	<servlet>
+		<servlet-name>send</servlet-name>
+		<servlet-class>com.xor10.x0webrtc.SendMessageServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>send</servlet-name>
+		<url-pattern>/send</url-pattern>
+		<http-method>POST</http-method>
+	</servlet-mapping>
+
+	<welcome-file-list>
+        <welcome-file>html/index.html</welcome-file>
+    </welcome-file-list>
+</web-app>

@@ -1,0 +1,75 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="../style/style.css">
+</head>
+<body>
+<table>
+	<tr>
+		<td>
+			<div id="game_content">
+				<table style="display: inline-block;" class="table_border">
+					<tr class="td_border">
+						<td class="td_border" class="td_border"><input id="button_0_0" type="button"
+						                                               onClick="game.onButtonClick(this)"
+						                                               class="button_default"/></td>
+						<td class="td_border"><input id="button_0_1" type="button" onClick="game.onButtonClick(this)"
+						                             class="button_default"/></td>
+						<td class="td_border"><input id="button_0_2" type="button" onClick="game.onButtonClick(this)"
+						                             class="button_default"/></td>
+					</tr>
+					<tr>
+						<td class="td_border"><input id="button_1_0" type="button" onClick="game.onButtonClick(this)"
+						                             class="button_default"/></td>
+						<td class="td_border"><input id="button_1_1" type="button" onClick="game.onButtonClick(this)"
+						                             class="button_default"/></td>
+						<td class="td_border"><input id="button_1_2" type="button" onClick="game.onButtonClick(this)"
+						                             class="button_default"/></td>
+					</tr>
+					<tr>
+						<td class="td_border"><input id="button_2_0" type="button" onClick="game.onButtonClick(this)"
+						                             class="button_default"/></td>
+						<td class="td_border"><input id="button_2_1" type="button" onClick="game.onButtonClick(this)"
+						                             class="button_default"/></td>
+						<td class="td_border"><input id="button_2_2" type="button" onClick="game.onButtonClick(this)"
+						                             class="button_default"/></td>
+					</tr>
+				</table>
+				<br/>
+				<a href="javascript:onRestart();">Restart</a>
+			</div>
+		</td>
+		<td class="td_border">
+			<table>
+				<tr>
+					<td class="td_border" align="center">
+						<div class="score_him">
+							Him: <span id="his_score">0</span>
+						</div>
+						<div class="video_container">
+							<p id="waiting_for_opponent" class="waiting_for_opponent">Waiting for opponent...</p>
+							<video id="remote_video" width="300px" height="300px"/>
+						</div>
+					</td>
+					<td class="td_border" align="center">
+						<div class="score_you">
+							You: <span id="your_score">0</span>
+						</div>
+						<div>
+							<video id="local_video" width="300px" height="300px"/>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="/_ah/channel/jsapi"></script>
+<script type="text/javascript" src="../js/util.js"></script>
+<script type="text/javascript" src="../js/Game.js"></script>
+<script type="text/javascript" src="../js/Media.js"></script>
+<script language="JavaScript" src="../js/SignalingChannel.js"></script>
+<script type="text/javascript" src="../js/main.js"></script>
+</body>
+</html>
