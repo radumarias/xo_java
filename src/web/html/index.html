@@ -9,55 +9,65 @@
 			<div id="game_content">
 				<div id="game_board">
 					<table style="display: inline-block;" class="table_border">
-						<tr class="td_border">
-							<td class="td_border" class="td_border"><input id="button_0_0" type="button"
-							                                               onClick="game.onButtonClick(this)"
-							                                               class="button_default"/></td>
-							<td class="td_border"><input id="button_0_1" type="button" onClick="game.onButtonClick(this)"
-							                             class="button_default"/></td>
-							<td class="td_border"><input id="button_0_2" type="button" onClick="game.onButtonClick(this)"
-							                             class="button_default"/></td>
+						<tr>
+							<td><input id="button_0_0" type="button"
+							           onClick="game.onButtonClick(this)"
+							           class="button_default"/></td>
+							<td><input id="button_0_1" type="button" onClick="game.onButtonClick(this)"
+							           class="button_default"/></td>
+							<td><input id="button_0_2" type="button" onClick="game.onButtonClick(this)"
+							           class="button_default"/></td>
 						</tr>
 						<tr>
-							<td class="td_border"><input id="button_1_0" type="button" onClick="game.onButtonClick(this)"
-							                             class="button_default"/></td>
-							<td class="td_border"><input id="button_1_1" type="button" onClick="game.onButtonClick(this)"
-							                             class="button_default"/></td>
-							<td class="td_border"><input id="button_1_2" type="button" onClick="game.onButtonClick(this)"
-							                             class="button_default"/></td>
+							<td><input id="button_1_0" type="button" onClick="game.onButtonClick(this)"
+							           class="button_default"/></td>
+							<td><input id="button_1_1" type="button" onClick="game.onButtonClick(this)"
+							           class="button_default"/></td>
+							<td><input id="button_1_2" type="button" onClick="game.onButtonClick(this)"
+							           class="button_default"/></td>
 						</tr>
 						<tr>
-							<td class="td_border"><input id="button_2_0" type="button" onClick="game.onButtonClick(this)"
-							                             class="button_default"/></td>
-							<td class="td_border"><input id="button_2_1" type="button" onClick="game.onButtonClick(this)"
-							                             class="button_default"/></td>
-							<td class="td_border"><input id="button_2_2" type="button" onClick="game.onButtonClick(this)"
-							                             class="button_default"/></td>
+							<td><input id="button_2_0" type="button" onClick="game.onButtonClick(this)"
+							           class="button_default"/></td>
+							<td><input id="button_2_1" type="button" onClick="game.onButtonClick(this)"
+							           class="button_default"/></td>
+							<td><input id="button_2_2" type="button" onClick="game.onButtonClick(this)"
+							           class="button_default"/></td>
 						</tr>
 					</table>
 				</div>
 				<br/>
-				<a href="javascript:onNewGame();">New Game</a>
+				<input type="button" value="New Game" class="new_game" onclick="onNewGame();"/>
 			</div>
 		</td>
-		<td class="td_border">
+		<td>
 			<table>
 				<tr>
-					<td class="td_border" align="center">
+					<td align="center">
 						<div id="his_score_container">
 							Him: <span id="his_score">0</span>
 						</div>
 						<div class="video_container">
 							<p id="waiting_for_opponent" class="waiting_for_opponent">Waiting for opponent...</p>
-							<video id="remote_video" width="300px" height="300px"/>
+							<video id="remote_video" class="video"></video>
+							<div class="no_media_container">
+								<div class="no_media_container_image_container">
+									<img id="no_remote_media_image" src="../drawable/white_smiley.gif" class="no_media_image">
+								</div>
+							</div>
 						</div>
 					</td>
-					<td class="td_border" align="center">
+					<td align="center">
 						<div id="your_score_container">
 							You: <span id="your_score">0</span>
 						</div>
-						<div>
-							<video id="local_video" width="300px" height="300px"/>
+						<div class="video_container">
+							<video id="local_video" class="video"></video>
+							<div class="no_media_container">
+								<div class="no_media_container_image_container">
+									<img id="no_local_media_image" src="../drawable/white_smiley.gif" class="no_media_image">
+								</div>
+							</div>
 						</div>
 					</td>
 				</tr>

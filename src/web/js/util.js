@@ -26,7 +26,7 @@ function trace(text) {
 }
 
 function createPosition(x, y) {
-	return { "x": x, "y": y};
+	return { x: x, y: y};
 }
 
 function copyToClipboard(text) {
@@ -63,6 +63,8 @@ function setViewEnabled(viewId, enabled, fade) {
 		if (fade) {
 			$('#' + viewId).fadeTo('slow', .2);
 		}
-		$('#' + viewId).append('<div id="' + viewId + '_disable_overlay" style="position: absolute;top:0;left:0;width: 100%;height:100%;z-index:2;opacity:0.4;filter: alpha(opacity = 50)"></div>');
+		$('#' + viewId).append('<div id="' + viewId + '_disable_overlay"></div>');
+		var viewOffset = $('#' + viewId).offset();
+		$('#' + viewId + '_disable_overlay').attr("style", "position: absolute;top:" + viewOffset.top + ";" + viewOffset.left + ":0;width:" + $('#' + viewId).width() + ";height:" + $('#' + viewId).height() + ";z-index:2;opacity:0.4;filter: alpha(opacity = 50)");
 	}
 }

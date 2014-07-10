@@ -34,8 +34,6 @@ Connection.prototype.prepareSignalingChannel = function () {
 				self.roomId = channelInfo.roomId;
 
 				self.prepareMedia();
-
-				self.onRoomCreated(self.roomId);
 			},
 
 			function onMessage(message) {
@@ -159,6 +157,9 @@ Connection.prototype.prepareMedia = function () {
 
 Connection.prototype.onMediaInitiated = function () {
 	trace("onMediaInitiated isMaster = " + this.isMaster);
+
+	this.onRoomCreated(this.roomId);
+
 	if (!this.isMaster) {
 		this.connect();
 	}

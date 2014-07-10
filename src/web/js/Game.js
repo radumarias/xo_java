@@ -1,6 +1,6 @@
 var GameMessageType = {
 	MOVE: "MOVE",
-	RESTART: "RESTART",
+	NEW_GAME: "NEW_GAME",
 	ENDED: "ENDED"
 };
 
@@ -15,7 +15,7 @@ function Game(type, roomId, onGameCreated, onReady, onGameStatus) {
 	this.onGameStatus = onGameStatus;
 
 	this.gameContentId = "game_content";
-	this.gameBoardId = "c";
+	this.gameBoardId = "game_board";
 
 	this.isMaster = (roomId == null);
 
@@ -66,11 +66,13 @@ Game.prototype.prepareConnection = function () {
 			// onLocalStream
 			function (stream) {
 				linkStream(stream, self.localStream);
+				$("#no_local_media_image").remove();
 			},
 
 			// onRemoteStream
 			function (stream) {
 				linkStream(stream, self.remoteStream);
+				$("#no_remote_media_image").remove();
 			},
 
 			// onDataMessage
@@ -90,8 +92,8 @@ Game.prototype.onButtonClick = function (button) {
 }
 
 Game.prototype.newGame = function () {
-	this.handleRestart();
-	this.sendRestart();
+	this.handleNewGame();
+	this.sendNewGame();
 }
 
 Game.prototype.handleOtherMove = function (pos, type) {
@@ -110,10 +112,10 @@ Game.prototype.syncClickToButton = function (button, pos, type) {
 
 Game.prototype.applyStyleForType = function (button, type) {
 	button.value = (type == 0 ? "O" : "X");
-	button.className = "button_" + type;
+	$(button).addClass("button_" + type);
 }
 
-Game.prototype.handleRestart = function () {
+Game.prototype.handleNewGame = function () {
 	for (var i = 0; i < 3; i++) {
 		for (var j = 0; j < 3; j++) {
 			var button = document.getElementById("button_" + i + "_" + j);
@@ -122,16 +124,20 @@ Game.prototype.handleRestart = function () {
 	}
 
 	this.prepareMatrix();
+
+	this.afterMove();
 }
 
-Game.prototype.handleEnded = function (win) {
+Game.prototype.handleEnded = function (win, linePoints) {
 	if (win) {
 		this.yourScore++;
 	} else {
 		this.hisScore++;
 	}
 
-//	this.handleRestart();
+//	this.handleNewGame();
+
+	this.highlightLinePoints(linePoints);
 
 	this.onGameStatus({
 		operation: 'ended',
@@ -139,6 +145,22 @@ Game.prototype.handleEnded = function (win) {
 		yourScore: this.yourScore,
 		hisScore: this.hisScore
 	});
+}
+
+Game.prototype.highlightLinePoints = function (linePoints) {
+	var self = this;
+	$.each(linePoints, function (index, value) {
+		self.highlightLinePoint(value)
+	});
+}
+
+Game.prototype.highlightLinePoint = function (point) {
+	var buttonId = "#button_" + point.x + "_" + point.y;
+	$(buttonId).addClass("highlight_line_point");
+	for (var i = 0; i < 2; i++) {
+		$(buttonId).fadeTo('fast', 0);
+		$(buttonId).fadeTo('fast', 1);
+	}
 }
 
 Game.prototype.handleGameStarted = function () {
@@ -166,12 +188,12 @@ Game.prototype.handleDataMessage = function (data) {
 			this.handleOtherMove(pos, type);
 
 			break;
-		case GameMessageType.RESTART:
-			this.handleRestart();
+		case GameMessageType.NEW_GAME:
+			this.handleNewGame();
 
 			break;
 		case GameMessageType.ENDED:
-			this.handleEnded(message.win);
+			this.handleEnded(message.win, message.linePoints);
 
 			break;
 	}
@@ -193,19 +215,20 @@ Game.prototype.sendMove = function (pos, type) {
 	);
 }
 
-Game.prototype.sendRestart = function () {
+Game.prototype.sendNewGame = function () {
 	this.sendMessage(
 			{
-				type: GameMessageType.RESTART
+				type: GameMessageType.NEW_GAME
 			}
 	);
 }
 
-Game.prototype.sendGameEnded = function (win) {
+Game.prototype.sendGameEnded = function (win, linePoints) {
 	this.sendMessage(
 			{
 				type: GameMessageType.ENDED,
-				win: win
+				win: win,
+				linePoints: linePoints
 			}
 	);
 }
@@ -214,9 +237,18 @@ Game.prototype.checkGameEnded = function () {
 	var ended = false;
 	var win = false;
 
+	var linePoints = this.getLinePoints();
+	trace("linePoints = " + linePoints);
+	if (linePoints != null) {
+		ended = true;
+		win = this.matrix[linePoints[0].x][linePoints[0].y] == this.type;
+		trace("win = " + win);
+		trace("first point type = " + this.matrix[linePoints[0].x][linePoints[0].y]);
+	}
+
 	if (ended) {
-		this.handleEnded(win);
-		this.sendGameEnded(!win);
+		this.handleEnded(win, linePoints);
+		this.sendGameEnded(!win, linePoints);
 	}
 }
 
@@ -237,15 +269,79 @@ Game.prototype.afterMove = function () {
 	}
 }
 
-Game.prototype.checkLine = function (points) {
-	if ((points[0] != null) && (points[0] === points[1] === points[2])) {
-		return {
-			status: 1,
-			value: points[0]
-		};
+/**
+ *
+ * @param points
+ * @returns (number} <br/>
+ *        0 - no winner,
+ *        1 - type 1 wins.
+ *        -1 - type 0 wins
+ */
+Game.prototype.isLine = function (points) {
+	var values = [this.matrix[points[0].x][points[0].y], this.matrix[points[1].x][points[1].y], this.matrix[points[2].x][points[2].y]]
+
+	var firstNotNull = (this.matrix[points[0].x][points[0].y] != null);
+	var allValuesEquals = (values[0] == values[1]) && (values[0] == values[2]);
+
+	var isLine = firstNotNull && allValuesEquals;
+//	trace("isLine =  " + isLine + " firstNotNull = " + firstNotNull + " allValuesEquals " + allValuesEquals + " points " + JSON.stringify(points) + " values " + values);
+
+	return isLine;
+}
+
+Game.prototype.getLinePoints = function () {
+	var points;
+
+	if ((points = [createPosition(0, 0), createPosition(0, 1), createPosition(0, 2)]) && this.isLine(points)) {
+		// o o o
+		// _ _ _
+		// _ _ _
+
+		return points;
+
+	} else if ((points = [createPosition(0, 0), createPosition(1, 1), createPosition(2, 2)]) && this.isLine(points)) {
+		// o _ _
+		// _ o _
+		// _ _ o
+
+		return points;
+	} else if ((points = [createPosition(0, 0), createPosition(1, 0), createPosition(2, 0)]) && this.isLine(points)) {
+		// o _ _
+		// o _ _
+		// o _ _
+
+		return points;
+	} else if ((points = [createPosition(0, 1), createPosition(1, 1), createPosition(2, 1)]) && this.isLine(points)) {
+		// _ o _
+		// _ o _
+		// _ o _
+
+		return points;
+	} else if ((points = [createPosition(0, 2), createPosition(1, 2), createPosition(2, 2)]) && this.isLine(points)) {
+		// _ _ o
+		// _ _ o
+		// _ _ o
+
+		return points;
+	} else if ((points = [createPosition(0, 2), createPosition(1, 1), createPosition(2, 0)]) && this.isLine(points)) {
+		// _ _ o
+		// _ o _
+		// o _ _
+
+		return points;
+	} else if ((points = [createPosition(1, 0), createPosition(1, 1), createPosition(1, 2)]) && this.isLine(points)) {
+		// _ _ _
+		// o o o
+		// _ _ _
+
+		return points;
+	} else if ((points = [createPosition(2, 0), createPosition(2, 1), createPosition(1, 2)]) && this.isLine(points)) {
+		// _ _ _
+		// _ _ _
+		// o o o
+
+		return points;
 	} else {
-		return {
-			status: 0
-		};
+		return null;
 	}
 }
