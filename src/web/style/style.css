@@ -13,7 +13,7 @@
 
 .button_0 {
 	-webkit-appearance: none;
-	color: black;
+	color: blue;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 100px;
 	width: 1em;
@@ -27,7 +27,7 @@
 
 .button_1 {
 	-webkit-appearance: none;
-	color: blue;
+	color: red;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 100px;
 	width: 1em;
@@ -55,12 +55,18 @@
 	position: relative;
 }
 
-.score_him {
+.score_container_0 {
 	font-weight: bold;
 	color: blue;
+	border: 2px solid transparent;
 }
 
-.score_you {
+.score_container_1 {
 	font-weight: bold;
-	color: green;
+	color: red;
+	border: 2px solid transparent;
+}
+
+.highlight_turn {
+	border: 2px solid gray;
 }

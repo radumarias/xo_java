@@ -35,15 +35,6 @@ Media.prototype.getStream = function(onSuccess, onError) {
 	}
 }
 
-Media.prototype.linkStream = function(stream, video) {
-	if (window.URL) {
-		video.src = window.URL.createObjectURL(stream);
-	} else {
-		video.src = stream;
-	}
-	video.play();
-}
-
 Media.prototype.onMediaAvailable = function(stream, video) {
 	trace("stream = " + stream);
 

@@ -1,27 +1,34 @@
-var SignalingMessageType = {};
+var GameMessageType = {
+	MOVE: "MOVE",
+	RESTART: "RESTART",
+	ENDED: "ENDED"
+};
 
-SignalingMessageType.SDP_OFFER = 'SDP_OFFER';
-SignalingMessageType.SDP_ANSWER = 'SDP_ANSWER';
-SignalingMessageType.ICE = 'ICE';
-SignalingMessageType.PRESENCE = 'PRESENCE';
-SignalingMessageType.CONNECTION_REQUEST = 'CONNECTION_REQUEST';
+Game.GAME_TYPE_0 = "0";
+Game.GAME_TYPE_1 = "1";
 
-var GameMessageType = {};
-GameMessageType.MOVE = "MOVE";
-GameMessageType.RESTART = "RESTART";
-
-function Game(type, roomId, onInitiated, onReady) {
+function Game(type, roomId, onGameCreated, onReady, onGameStatus) {
 	this.type = type;
 	this.roomId = roomId;
-	this.onInitiated = onInitiated;
+	this.onGameCreated = onGameCreated;
 	this.onReady = onReady;
+	this.onGameStatus = onGameStatus;
+
+	this.gameContentId = "game_content";
+	this.gameBoardId = "c";
+
+	this.isMaster = (roomId == null);
+
+	this.yourScore = 0;
+	this.hisScore = 0;
+	this.yourTurn = this.isMaster;
 }
 
 Game.prototype.initiate = function () {
-	this.isMaster = (roomId == null);
+	setViewEnabled(this.gameContentId, false, true);
 
-	this.localVideo = document.getElementById("local_video");
-	this.remoteVideo = document.getElementById("remote_video");
+	this.localStream = document.getElementById("local_video");
+	this.remoteStream = document.getElementById("remote_video");
 
 	this.mediaInitiated = false;
 
@@ -30,7 +37,7 @@ Game.prototype.initiate = function () {
 
 	this.prepareMatrix();
 
-	this.prepareSignalingChannel();
+	this.prepareConnection();
 }
 
 Game.prototype.prepareMatrix = function () {
@@ -40,17 +47,49 @@ Game.prototype.prepareMatrix = function () {
 	this.matrix[2] = new Array(3);
 }
 
-Game.GAME_TYPE_0 = "0";
-Game.GAME_TYPE_1 = "1";
+Game.prototype.prepareConnection = function () {
+	var self = this;
+	this.connection = new Connection(self.roomId,
+			// onRoomCreated
+			function (roomId) {
+				self.onGameCreated(roomId);
+			},
+
+			// onConnectionReady
+			function () {
+				setViewEnabled(self.gameContentId, true, true);
+				self.handleGameStarted();
+
+				self.onReady();
+			},
+
+			// onLocalStream
+			function (stream) {
+				linkStream(stream, self.localStream);
+			},
+
+			// onRemoteStream
+			function (stream) {
+				linkStream(stream, self.remoteStream);
+			},
+
+			// onDataMessage
+			function (data) {
+				self.handleDataMessage(data);
+			});
+	this.connection.initiate();
+}
 
 Game.prototype.onButtonClick = function (button) {
 	var pos = getPositionFromSuffix(button.id);
 
 	this.syncClickToButton(button, pos, this.type);
 	this.sendMove(pos, this.type);
+
+	this.afterMove();
 }
 
-Game.prototype.restart = function () {
+Game.prototype.newGame = function () {
 	this.handleRestart();
 	this.sendRestart();
 }
@@ -58,6 +97,8 @@ Game.prototype.restart = function () {
 Game.prototype.handleOtherMove = function (pos, type) {
 	var button = document.getElementById("button_" + pos.x + "_" + pos.y);
 	this.syncClickToButton(button, pos, type);
+
+	this.afterMove();
 }
 
 Game.prototype.syncClickToButton = function (button, pos, type) {
@@ -72,267 +113,6 @@ Game.prototype.applyStyleForType = function (button, type) {
 	button.className = "button_" + type;
 }
 
-Game.prototype.prepareSignalingChannel = function () {
-	var self = this;
-	this.signalingChannel = new SignalingChannel(this.roomId,
-			function onOpened(channelInfo) {
-				self.roomId = channelInfo.roomId;
-
-				self.prepareMedia();
-
-				self.onInitiated(self.roomId);
-			},
-
-			function onMessage(message) {
-				var messageObj = eval("(" + message + ")");
-
-				switch (messageObj.type) {
-					case SignalingMessageType.SDP_OFFER:
-					{
-						self.handleOffer(new RTCSessionDescription(messageObj.body));
-
-						break
-					}
-					case SignalingMessageType.SDP_ANSWER:
-					{
-						self.handleAnswer(new RTCSessionDescription(messageObj.body));
-
-						break
-					}
-					case SignalingMessageType.ICE:
-					{
-						var candidate = new RTCIceCandidate({
-							sdpMLineIndex: messageObj.body.label,
-							candidate: messageObj.body.candidate
-						});
-						self.addIceCandidate(candidate);
-
-						break
-					}
-					case SignalingMessageType.PRESENCE:
-					{
-						break;
-					}
-					case SignalingMessageType.CONNECTION_REQUEST:
-					{
-						self.prepareP2PConnection();
-
-						break;
-					}
-				}
-			},
-
-			function onError(error) {
-			},
-
-			function onClose() {
-			}
-	);
-	this.signalingChannel.initiate();
-}
-
-Game.prototype.sendConnectionRequest = function () {
-	var message = {
-		type: SignalingMessageType.CONNECTION_REQUEST
-	}
-	this.signalingChannel.send(JSON.stringify(message))
-}
-
-Game.prototype.prepareP2PConnection = function () {
-	var servers = isLocalHost() ? {} :
-	{iceServers: [
-		{url: "stun:stun.l.google.com:19302"}
-	]};
-	this.peerConnection = new webkitRTCPeerConnection(servers,
-			{optional: [
-				{RtpDataChannels: true}
-			]});
-	trace('Created peer connection object peerConnection');
-
-	try {
-		// Reliable Data Channels not yet supported in Chrome
-		this.dataChannel = this.peerConnection.createDataChannel("dataChannel",
-				{reliable: false});
-		trace('Created data channel');
-	} catch (e) {
-		alert('Failed to create data channel. ' +
-				'You need Chrome M25 or later with RtpDataChannel enabled');
-		trace('createDataChannel() failed with exception: ' + e.message);
-	}
-
-	var self = this;
-	this.peerConnection.onicecandidate = function (event) {
-		self.gotIceCandidate(event);
-	};
-	// once remote stream arrives, show it in the remote video element
-	this.peerConnection.onaddstream = function (evt) {
-		trace(evt.stream);
-		self.media.linkStream(evt.stream, self.remoteVideo);
-	};
-	this.dataChannel.onmessage = function (event) {
-		self.handleDataMessage(event)
-	};
-	this.dataChannel.onopen = function (event) {
-		self.onReady();
-	};
-}
-
-Game.prototype.prepareMedia = function () {
-	this.media = new Media();
-	this.media.initiate();
-
-	var self = this;
-	this.media.getStream(
-			function (stream) {
-				self.media.linkStream(stream, self.localVideo);
-//				if (self.peerConnection != null) {
-//					self.peerConnection.addStream(stream);
-//				} else {
-//				}
-				self.pendingMediaStream = stream;
-
-				self.mediaInitiated = true;
-				self.onMediaInitiated();
-			},
-			function (error) {
-				trace("Media error: ", error);
-
-				self.mediaInitiated = true;
-				self.onMediaInitiated();
-			}
-	);
-}
-
-Game.prototype.onMediaInitiated = function () {
-	if (!this.isMaster) {
-		this.connect();
-	}
-}
-
-Game.prototype.connect = function () {
-	trace("connect");
-
-	this.sendConnectionRequest();
-
-	var self = this;
-	setTimeout(function () {
-		self.prepareP2PConnection();
-		self.pendingOffer = self.createOffer();
-
-		self.nextStep();
-	}, 500);
-
-}
-
-Game.prototype.nextStep = function () {
-	if (this.mediaInitiated) {
-		if (this.pendingOffer) {
-			this.pendingOffer();
-
-			this.pendingOffer = null;
-		}
-		if (this.pendingAnswer) {
-			this.pendingAnswer();
-
-			this.pendingAnswer = null;
-		}
-	}
-}
-
-Game.prototype.createOffer = function () {
-	var self = this;
-	if (this.pendingMediaStream != null) {
-		this.peerConnection.addStream(this.pendingMediaStream);
-		this.pendingMediaStream = null;
-	}
-	this.peerConnection.createOffer(function (desc) {
-		self.gotOffer(desc);
-	});
-}
-
-Game.prototype.gotOffer = function (desc) {
-	trace("send offer");
-
-	this.peerConnection.setLocalDescription(desc);
-
-	var message = {
-		type: SignalingMessageType.SDP_OFFER,
-		body: desc
-	}
-	this.signalingChannel.send(JSON.stringify(message));
-}
-
-Game.prototype.handleOffer = function (desc) {
-	//trace('Offer \n' + desc.sdp);
-	trace('handle Offer');
-	this.peerConnection.setRemoteDescription(desc);
-	if (this.pendingMediaStream != null) {
-		this.peerConnection.addStream(this.pendingMediaStream);
-		this.pendingMediaStream = null;
-	}
-
-	this.pendingAnswer = this.createAnswer;
-
-	this.nextStep();
-}
-
-Game.prototype.createAnswer = function () {
-	var self = this;
-	this.peerConnection.createAnswer(function (desc) {
-		self.gotAnswer(desc);
-	});
-}
-
-Game.prototype.gotAnswer = function (desc) {
-	trace("send answer");
-
-	this.peerConnection.setLocalDescription(desc);
-	var message = {
-		type: SignalingMessageType.SDP_ANSWER,
-		body: desc
-	}
-	this.signalingChannel.send(JSON.stringify(message));
-}
-
-Game.prototype.handleAnswer = function (desc) {
-	//trace('Answer \n' + desc.sdp);
-	trace('handle Answer');
-	this.peerConnection.setRemoteDescription(desc);
-}
-
-Game.prototype.addIceCandidate = function (candidate) {
-	this.peerConnection.addIceCandidate(candidate);
-}
-
-Game.prototype.gotIceCandidate = function (event) {
-	trace('ice callback');
-	if (event.candidate) {
-		//trace('ICE candidate: \n' + event.candidate.candidate);
-
-		var message = {
-			type: SignalingMessageType.ICE,
-			body: {
-				label: event.candidate.sdpMLineIndex,
-				id: event.candidate.sdpMid,
-				candidate: event.candidate.candidate
-			}
-		}
-		this.signalingChannel.send(JSON.stringify(message))
-	}
-}
-
-Game.prototype.handleDataMessage = function (event) {
-	trace('Received data message: ' + event.data);
-
-	var message = eval("(" + event.data + ")");
-
-	if (message.type == GameMessageType.MOVE) {
-		this.handleOtherMove(createPosition(message.x, message.y), message.playerType);
-	} else if (message.type == GameMessageType.RESTART) {
-		this.handleRestart();
-	}
-}
-
 Game.prototype.handleRestart = function () {
 	for (var i = 0; i < 3; i++) {
 		for (var j = 0; j < 3; j++) {
@@ -344,14 +124,66 @@ Game.prototype.handleRestart = function () {
 	this.prepareMatrix();
 }
 
+Game.prototype.handleEnded = function (win) {
+	if (win) {
+		this.yourScore++;
+	} else {
+		this.hisScore++;
+	}
+
+//	this.handleRestart();
+
+	this.onGameStatus({
+		operation: 'ended',
+		win: win,
+		yourScore: this.yourScore,
+		hisScore: this.hisScore
+	});
+}
+
+Game.prototype.handleGameStarted = function () {
+	setViewEnabled(this.gameBoardId, this.yourTurn, false);
+	this.onGameStatus({
+		operation: 'started',
+		yourTurn: this.yourTurn
+	});
+}
+
 Game.prototype.resetButton = function (button) {
 	button.disabled = false;
 	button.value = "";
 	button.className = "button_default";
 }
 
+Game.prototype.handleDataMessage = function (data) {
+	var message = eval("(" + data + ")");
+
+	switch (message.type) {
+		case GameMessageType.MOVE:
+			var pos = createPosition(message.x, message.y);
+			var type = message.playerType;
+
+			this.handleOtherMove(pos, type);
+
+			break;
+		case GameMessageType.RESTART:
+			this.handleRestart();
+
+			break;
+		case GameMessageType.ENDED:
+			this.handleEnded(message.win);
+
+			break;
+	}
+}
+
+Game.prototype.sendMessage = function (message) {
+	var data = JSON.stringify(message);
+	this.connection.sendData(data);
+}
+
 Game.prototype.sendMove = function (pos, type) {
-	var data = JSON.stringify(
+	this.sendMessage(
 			{
 				type: GameMessageType.MOVE,
 				x: pos.x,
@@ -359,22 +191,61 @@ Game.prototype.sendMove = function (pos, type) {
 				playerType: type
 			}
 	);
-
-	this.sendData(data);
 }
 
 Game.prototype.sendRestart = function () {
-	var data = JSON.stringify(
+	this.sendMessage(
 			{
 				type: GameMessageType.RESTART
 			}
 	);
-
-	this.sendData(data);
 }
 
-Game.prototype.sendData = function (data) {
-	trace('Sent data: ' + data);
+Game.prototype.sendGameEnded = function (win) {
+	this.sendMessage(
+			{
+				type: GameMessageType.ENDED,
+				win: win
+			}
+	);
+}
 
-	this.dataChannel.send(data);
+Game.prototype.checkGameEnded = function () {
+	var ended = false;
+	var win = false;
+
+	if (ended) {
+		this.handleEnded(win);
+		this.sendGameEnded(!win);
+	}
+}
+
+Game.prototype.afterMove = function () {
+	this.yourTurn = !this.yourTurn;
+
+	trace("yourTurn = " + this.yourTurn);
+
+	setViewEnabled(this.gameBoardId, this.yourTurn, false);
+
+	this.onGameStatus({
+		operation: 'move',
+		yourTurn: this.yourTurn
+	});
+
+	if (this.isMaster) {
+		this.checkGameEnded();
+	}
+}
+
+Game.prototype.checkLine = function (points) {
+	if ((points[0] != null) && (points[0] === points[1] === points[2])) {
+		return {
+			status: 1,
+			value: points[0]
+		};
+	} else {
+		return {
+			status: 0
+		};
+	}
 }

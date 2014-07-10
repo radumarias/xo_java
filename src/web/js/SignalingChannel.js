@@ -18,7 +18,6 @@ SignalingChannel.prototype.initiate = function () {
 }
 
 SignalingChannel.prototype.joinRoom = function () {
-	console.log("roomId = " + roomId);
 	var url = "/joinRoom";
 
 	if (roomId != null) {
@@ -65,8 +64,6 @@ SignalingChannel.prototype.onChannelInfo = function (channelInfo) {
 }
 
 SignalingChannel.prototype.onOpened = function () {
-	console.log("onOpened " + this.channelInfo);
-
 	this.onOpenedCallback(this.channelInfo);
 }
 SignalingChannel.prototype.onMessage = function (message) {
