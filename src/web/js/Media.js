@@ -1,3 +1,5 @@
+navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
 function Media() {
 }
 
@@ -6,9 +8,6 @@ Media.prototype.initiate = function() {
 }
 
 Media.prototype.play = function(video) {
-	navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-	window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
-
 	var self = this;
 	if (navigator.getUserMedia) {
 		navigator.getUserMedia(this.constraints,
@@ -21,10 +20,6 @@ Media.prototype.play = function(video) {
 }
 
 Media.prototype.getStream = function(onSuccess, onError) {
-	navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-	window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
-
-	var self = this;
 	if (navigator.getUserMedia) {
 		navigator.getUserMedia(this.constraints,
 			function(stream) { onSuccess(stream); },
@@ -38,9 +33,9 @@ Media.prototype.getStream = function(onSuccess, onError) {
 Media.prototype.onMediaAvailable = function(stream, video) {
 	trace("stream = " + stream);
 
-	this.linkStream(stream, video);
+	this.linkStream(video, stream);
 }
 
 Media.prototype.onMediaError = function(error) {
-	trace("navigator.getUserMedia error: ", error);
+	trace("getUserMedia error: ", error);
 }

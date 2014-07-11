@@ -27,8 +27,8 @@ function Game(type, roomId, onGameCreated, onReady, onGameStatus) {
 Game.prototype.initiate = function () {
 	setViewEnabled(this.gameContentId, false, true);
 
-	this.localStream = document.getElementById("local_video");
-	this.remoteStream = document.getElementById("remote_video");
+	this.localMedia = document.getElementById("local_video");
+	this.remoteMedia = document.getElementById("remote_video");
 
 	this.mediaInitiated = false;
 
@@ -65,13 +65,13 @@ Game.prototype.prepareConnection = function () {
 
 			// onLocalStream
 			function (stream) {
-				linkStream(stream, self.localStream);
+				linkStream(self.localMedia, stream);
 				$("#no_local_media_image").remove();
 			},
 
 			// onRemoteStream
 			function (stream) {
-				linkStream(stream, self.remoteStream);
+				linkStream(self.remoteMedia, stream);
 				$("#no_remote_media_image").remove();
 			},
 
@@ -85,7 +85,12 @@ Game.prototype.prepareConnection = function () {
 Game.prototype.onButtonClick = function (button) {
 	var pos = getPositionFromSuffix(button.id);
 
-	this.syncClickToButton(button, pos, this.type);
+	this.move(pos);
+}
+
+Game.prototype.move = function (pos) {
+	var button = this.getButton(pos);
+	this.syncButtonState(button, pos, this.type);
 	this.sendMove(pos, this.type);
 
 	this.afterMove();
@@ -97,13 +102,13 @@ Game.prototype.newGame = function () {
 }
 
 Game.prototype.handleOtherMove = function (pos, type) {
-	var button = document.getElementById("button_" + pos.x + "_" + pos.y);
-	this.syncClickToButton(button, pos, type);
+	var button = this.getButton(pos);
+	this.syncButtonState(button, pos, type);
 
 	this.afterMove();
 }
 
-Game.prototype.syncClickToButton = function (button, pos, type) {
+Game.prototype.syncButtonState = function (button, pos, type) {
 	this.applyStyleForType(button, type);
 	button.disabled = true;
 
@@ -118,14 +123,14 @@ Game.prototype.applyStyleForType = function (button, type) {
 Game.prototype.handleNewGame = function () {
 	for (var i = 0; i < 3; i++) {
 		for (var j = 0; j < 3; j++) {
-			var button = document.getElementById("button_" + i + "_" + j);
+			var button = this.getButton(createPosition(i, j));
 			this.resetButton(button);
 		}
 	}
 
 	this.prepareMatrix();
 
-	this.afterMove();
+	this.toggleTurn();
 }
 
 Game.prototype.handleEnded = function (win, linePoints) {
@@ -138,6 +143,8 @@ Game.prototype.handleEnded = function (win, linePoints) {
 //	this.handleNewGame();
 
 	this.highlightLinePoints(linePoints);
+
+	this.toggleTurn();
 
 	this.onGameStatus({
 		operation: 'ended',
@@ -253,6 +260,14 @@ Game.prototype.checkGameEnded = function () {
 }
 
 Game.prototype.afterMove = function () {
+	this.toggleTurn();
+
+	if (this.isMaster) {
+		this.checkGameEnded();
+	}
+}
+
+Game.prototype.toggleTurn = function () {
 	this.yourTurn = !this.yourTurn;
 
 	trace("yourTurn = " + this.yourTurn);
@@ -260,13 +275,9 @@ Game.prototype.afterMove = function () {
 	setViewEnabled(this.gameBoardId, this.yourTurn, false);
 
 	this.onGameStatus({
-		operation: 'move',
+		operation: 'turn',
 		yourTurn: this.yourTurn
 	});
-
-	if (this.isMaster) {
-		this.checkGameEnded();
-	}
 }
 
 /**
@@ -335,7 +346,7 @@ Game.prototype.getLinePoints = function () {
 		// _ _ _
 
 		return points;
-	} else if ((points = [createPosition(2, 0), createPosition(2, 1), createPosition(1, 2)]) && this.isLine(points)) {
+	} else if ((points = [createPosition(2, 0), createPosition(2, 1), createPosition(2, 2)]) && this.isLine(points)) {
 		// _ _ _
 		// _ _ _
 		// o o o
@@ -344,4 +355,8 @@ Game.prototype.getLinePoints = function () {
 	} else {
 		return null;
 	}
+}
+
+Game.prototype.getButton = function (pos) {
+	return document.getElementById("button_" + pos.x + "_" + pos.y);
 }

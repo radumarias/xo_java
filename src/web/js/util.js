@@ -31,8 +31,8 @@ function createPosition(x, y) {
 	return { x: x, y: y};
 }
 
-function copyToClipboard(text) {
-	window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
+function copyToClipboard(title, text) {
+	window.prompt(title, text);
 }
 
 function showWaitDialog() {
@@ -43,10 +43,13 @@ function showWaitDialog() {
 }
 
 function isLocalHost() {
-	return window.location.hostname == "locahost" || window.location.hostname == "127.0.0.1";
+	return window.location.hostname == "localhost" || window.location.hostname == "127.0.0.1";
 }
 
-function linkStream(stream, video) {
+function linkStream(video, stream) {
+//	attachMediaStream(video, stream);
+//	video.play();
+
 	if (window.URL) {
 		video.src = window.URL.createObjectURL(stream);
 	} else {

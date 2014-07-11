@@ -11,8 +11,10 @@ var game = new Game(gameType, roomId,
 		function (roomId) {
 			trace("onGameCreated roomId = " + roomId);
 
+			$('#waiting_for_opponent').addClass("waiting_for_opponent_visible");
+
 			if (isMaster) {
-				copyToClipboard(window.location + "?roomId=" + roomId);
+				copyToClipboard("Send this to your friend.\nCtrl+C, Enter", window.location + "?roomId=" + roomId);
 			}
 		},
 
@@ -36,7 +38,7 @@ var game = new Game(gameType, roomId,
 					}
 
 					break;
-				case 'move':
+				case 'turn':
 					$('#your_score_container').toggleClass("highlight_turn", 1000, "easeOutSine");
 					$('#his_score_container').toggleClass("highlight_turn", 1000, "easeOutSine");
 

@@ -23,13 +23,18 @@
 	border: 1px solid black;
 }
 
-.waiting_for_opponent {
+.waiting_for_opponent_default {
 	font-weight: bold;
 	color: blue;
 	position: absolute;
 	top: 100%;
 	text-align: center;
 	z-index: 100;
+	visibility: hidden;
+}
+
+.waiting_for_opponent_visible {
+	visibility: visible;
 }
 
 .score_container_0 {

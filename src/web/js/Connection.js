@@ -1,4 +1,4 @@
-var iceTimeout = 5000;
+var iceTimeout = 3000;
 
 var SignalingMessageType = {};
 
@@ -56,11 +56,7 @@ Connection.prototype.prepareSignalingChannel = function () {
 					}
 					case SignalingMessageType.ICE:
 					{
-						var candidate = new RTCIceCandidate({
-							sdpMLineIndex: messageObj.body.label,
-							candidate: messageObj.body.candidate
-						});
-						self.addIceCandidate(candidate);
+						self.handleIceCandidate(messageObj.body);
 
 						break
 					}
@@ -94,11 +90,30 @@ Connection.prototype.sendConnectionRequest = function () {
 }
 
 Connection.prototype.prepareP2PConnection = function () {
-	var servers = isLocalHost() ? {} :
-	{iceServers: [
-		{url: "stun:stun.l.google.com:19302"}
-	]};
-	this.peerConnection = new webkitRTCPeerConnection(servers,
+	var iceServers;
+
+	if (!isLocalHost()) {
+		var STUN = {
+			url: 'stun:stun.l.google.com:19302'
+		};
+
+//		var TURN = {
+//			url: 'turn:homeo@turn.bistri.com:80',
+//			credential: 'homeo'
+//		};
+
+//		iceServers = {
+//			iceServers: [STUN, TURN]
+//		};
+		iceServers = {
+			iceServers: [STUN]
+		};
+	}
+//	{iceServers: [
+//		{url: "stun:stun.l.google.com:19302"}
+//	]};
+	trace("servers = " + JSON.stringify(iceServers));
+	this.peerConnection = new webkitRTCPeerConnection(iceServers,
 			{optional: [
 				{RtpDataChannels: true}
 			]});
@@ -131,6 +146,7 @@ Connection.prototype.prepareP2PConnection = function () {
 	};
 	this.dataChannel.onopen = function (event) {
 		self.onConnectionReady();
+		self.signalingChannel.close();
 	};
 }
 
@@ -262,18 +278,35 @@ Connection.prototype.addIceCandidate = function (candidate) {
 	this.peerConnection.addIceCandidate(candidate);
 }
 
+Connection.prototype.handleIceCandidate = function (candidate) {
+//	var candidateObj = new RTCIceCandidate({
+//		sdpMLineIndex: candidate.label,
+//		candidate: candidate.candidate
+//	});
+	var candidateObj = new RTCIceCandidate({
+		sdpMLineIndex: candidate.sdpMLineIndex,
+		sdpMid: candidate.sdpMid,
+		candidate: candidate.candidate
+	});
+	this.addIceCandidate(candidateObj);
+}
+
 Connection.prototype.gotIceCandidate = function (event) {
 	trace('ice callback');
 	if (event.candidate) {
 		//trace('ICE candidate: \n' + event.candidate.candidate);
 
+//		var message = {
+//			type: SignalingMessageType.ICE,
+//			body: {
+//				label: event.candidate.sdpMLineIndex,
+//				id: event.candidate.sdpMid,
+//				candidate: event.candidate.candidate
+//			}
+//		}
 		var message = {
 			type: SignalingMessageType.ICE,
-			body: {
-				label: event.candidate.sdpMLineIndex,
-				id: event.candidate.sdpMid,
-				candidate: event.candidate.candidate
-			}
+			body: event.candidate
 		}
 		var self = this;
 		setTimeout(function () {

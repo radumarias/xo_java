@@ -39,6 +39,10 @@ SignalingChannel.prototype.joinRoom = function () {
 	});
 }
 
+SignalingChannel.prototype.close = function () {
+	this.socket.close();
+}
+
 SignalingChannel.prototype.onChannelInfo = function (channelInfo) {
 	this.channelInfo = channelInfo;
 
