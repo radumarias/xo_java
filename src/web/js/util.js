@@ -1,3 +1,5 @@
+window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
+
 $.urlParam = function (name) {
 	var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
 	if (results == null) {

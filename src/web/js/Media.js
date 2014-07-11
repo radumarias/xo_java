@@ -2,7 +2,7 @@ function Media() {
 }
 
 Media.prototype.initiate = function() {
-	this.constraints = {audio: false, video: true};
+	this.constraints = {audio: true, video: true};
 }
 
 Media.prototype.play = function(video) {

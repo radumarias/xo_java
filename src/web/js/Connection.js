@@ -1,3 +1,5 @@
+var iceTimeout = 5000;
+
 var SignalingMessageType = {};
 
 SignalingMessageType.SDP_OFFER = 'SDP_OFFER';
@@ -273,7 +275,11 @@ Connection.prototype.gotIceCandidate = function (event) {
 				candidate: event.candidate.candidate
 			}
 		}
-		this.signalingChannel.send(JSON.stringify(message))
+		var self = this;
+		setTimeout(function () {
+			self.signalingChannel.send(JSON.stringify(message))
+		}, iceTimeout);
+		iceTimeout += 1000;
 	}
 }
 
