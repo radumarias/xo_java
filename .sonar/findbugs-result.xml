@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<BugCollection version="2.0.3" sequence="0" timestamp="1405359957000" analysisTimestamp="1405359967097" release="">
+  <Project>
+    <Jar>/home/radu/Development/Workspace/x0/xo_java/out/production/X0WebRTC/com/xor10/x0webrtc/Member.class</Jar>
+    <Jar>/home/radu/Development/Workspace/x0/xo_java/out/production/X0WebRTC/com/xor10/x0webrtc/Channel.class</Jar>
+    <Jar>/home/radu/Development/Workspace/x0/xo_java/out/production/X0WebRTC/com/xor10/x0webrtc/SendMessageServlet.class</Jar>
+    <Jar>/home/radu/Development/Workspace/x0/xo_java/out/production/X0WebRTC/com/xor10/x0webrtc/TicTacToeServlet.class</Jar>
+    <Jar>/home/radu/Development/Workspace/x0/xo_java/out/production/X0WebRTC/com/xor10/x0webrtc/RoomsManager.class</Jar>
+    <Jar>/home/radu/Development/Workspace/x0/xo_java/out/production/X0WebRTC/com/xor10/x0webrtc/Room.class</Jar>
+    <Jar>/home/radu/Development/Workspace/x0/xo_java/out/production/X0WebRTC/com/xor10/x0webrtc/ChannelManager.class</Jar>
+    <Jar>/home/radu/Development/Workspace/x0/xo_java/out/production/X0WebRTC/com/xor10/x0webrtc/Util.class</Jar>
+    <AuxClasspathEntry>/home/radu/Development/Workspace/x0/xo_java/out/production/X0WebRTC</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/radu/Development/Workspace/x0/xo_java/./.sonar/findbugs/annotations.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/home/radu/Development/Workspace/x0/xo_java/./.sonar/findbugs/jsr305.jar</AuxClasspathEntry>
+    <SrcDir>/home/radu/Development/Workspace/x0/xo_java/src</SrcDir>
+  </Project>
+  <Errors errors="0" missingClasses="6">
+    <MissingClass>com.google.appengine.api.channel.ChannelMessage</MissingClass>
+    <MissingClass>com.google.appengine.api.channel.ChannelService</MissingClass>
+    <MissingClass>com.google.appengine.api.channel.ChannelServiceFactory</MissingClass>
+    <MissingClass>javax.servlet.http.HttpServlet</MissingClass>
+    <MissingClass>javax.servlet.http.HttpServletRequest</MissingClass>
+    <MissingClass>javax.servlet.http.HttpServletResponse</MissingClass>
+  </Errors>
+  <FindBugsSummary timestamp="Mon, 14 Jul 2014 20:45:57 +0300" total_classes="8" referenced_classes="28" total_bugs="0" total_size="172" num_packages="1" vm_version="24.51-b03" cpu_seconds="6.62" clock_seconds="2.43" peak_mbytes="370.13" alloc_mbytes="3564.50" gc_seconds="0.00">
+    <FileStats path="com/xor10/x0webrtc/Channel.java" bugCount="0" size="18"/>
+    <FileStats path="com/xor10/x0webrtc/ChannelManager.java" bugCount="0" size="29"/>
+    <FileStats path="com/xor10/x0webrtc/Member.java" bugCount="0" size="23"/>
+    <FileStats path="com/xor10/x0webrtc/Room.java" bugCount="0" size="34"/>
+    <FileStats path="com/xor10/x0webrtc/RoomsManager.java" bugCount="0" size="18"/>
+    <FileStats path="com/xor10/x0webrtc/SendMessageServlet.java" bugCount="0" size="10"/>
+    <FileStats path="com/xor10/x0webrtc/TicTacToeServlet.java" bugCount="0" size="20"/>
+    <FileStats path="com/xor10/x0webrtc/Util.java" bugCount="0" size="20"/>
+    <PackageStats package="com.xor10.x0webrtc" total_bugs="0" total_types="8" total_size="172">
+      <ClassStats class="com.xor10.x0webrtc.Channel" sourceFile="Channel.java" interface="false" size="18" bugs="0"/>
+      <ClassStats class="com.xor10.x0webrtc.ChannelManager" sourceFile="ChannelManager.java" interface="false" size="29" bugs="0"/>
+      <ClassStats class="com.xor10.x0webrtc.Member" sourceFile="Member.java" interface="false" size="23" bugs="0"/>
+      <ClassStats class="com.xor10.x0webrtc.Room" sourceFile="Room.java" interface="false" size="34" bugs="0"/>
+      <ClassStats class="com.xor10.x0webrtc.RoomsManager" sourceFile="RoomsManager.java" interface="false" size="18" bugs="0"/>
+      <ClassStats class="com.xor10.x0webrtc.SendMessageServlet" sourceFile="SendMessageServlet.java" interface="false" size="10" bugs="0"/>
+      <ClassStats class="com.xor10.x0webrtc.TicTacToeServlet" sourceFile="TicTacToeServlet.java" interface="false" size="20" bugs="0"/>
+      <ClassStats class="com.xor10.x0webrtc.Util" sourceFile="Util.java" interface="false" size="20" bugs="0"/>
+    </PackageStats>
+    <FindBugsProfile>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.ClassInfoAnalysisEngine" totalMilliseconds="292" invocations="356" avgMicrosecondsPerInvocation="821" maxMicrosecondsPerInvocation="13508" standardDeviationMircosecondsPerInvocation="1479"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.FieldItemSummary" totalMilliseconds="176" invocations="28" avgMicrosecondsPerInvocation="6307" maxMicrosecondsPerInvocation="29190" standardDeviationMircosecondsPerInvocation="8097"/>
+      <ClassProfile name="edu.umd.cs.findbugs.OpcodeStack$JumpInfoFactory" totalMilliseconds="147" invocations="121" avgMicrosecondsPerInvocation="1221" maxMicrosecondsPerInvocation="8142" standardDeviationMircosecondsPerInvocation="1424"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.NoteDirectlyRelevantTypeQualifiers" totalMilliseconds="63" invocations="28" avgMicrosecondsPerInvocation="2250" maxMicrosecondsPerInvocation="8104" standardDeviationMircosecondsPerInvocation="2526"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.IsNullValueDataflowFactory" totalMilliseconds="55" invocations="38" avgMicrosecondsPerInvocation="1453" maxMicrosecondsPerInvocation="10806" standardDeviationMircosecondsPerInvocation="2278"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.TypeDataflowFactory" totalMilliseconds="54" invocations="39" avgMicrosecondsPerInvocation="1406" maxMicrosecondsPerInvocation="14818" standardDeviationMircosecondsPerInvocation="2721"/>
+      <ClassProfile name="edu.umd.cs.findbugs.ba.npe.NullDerefAndRedundantComparisonFinder" totalMilliseconds="53" invocations="38" avgMicrosecondsPerInvocation="1420" maxMicrosecondsPerInvocation="16775" standardDeviationMircosecondsPerInvocation="2857"/>
+      <ClassProfile name="edu.umd.cs.findbugs.util.TopologicalSort" totalMilliseconds="53" invocations="318" avgMicrosecondsPerInvocation="169" maxMicrosecondsPerInvocation="1780" standardDeviationMircosecondsPerInvocation="273"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.UnconditionalValueDerefDataflowFactory" totalMilliseconds="51" invocations="38" avgMicrosecondsPerInvocation="1346" maxMicrosecondsPerInvocation="10981" standardDeviationMircosecondsPerInvocation="2254"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.FunctionsThatMightBeMistakenForProcedures" totalMilliseconds="50" invocations="28" avgMicrosecondsPerInvocation="1812" maxMicrosecondsPerInvocation="12170" standardDeviationMircosecondsPerInvocation="2978"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.CalledMethods" totalMilliseconds="49" invocations="28" avgMicrosecondsPerInvocation="1765" maxMicrosecondsPerInvocation="7743" standardDeviationMircosecondsPerInvocation="2088"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.ValueNumberDataflowFactory" totalMilliseconds="48" invocations="39" avgMicrosecondsPerInvocation="1256" maxMicrosecondsPerInvocation="12818" standardDeviationMircosecondsPerInvocation="2340"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.MethodGenFactory" totalMilliseconds="47" invocations="38" avgMicrosecondsPerInvocation="1254" maxMicrosecondsPerInvocation="42299" standardDeviationMircosecondsPerInvocation="6749"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.CFGFactory" totalMilliseconds="44" invocations="38" avgMicrosecondsPerInvocation="1173" maxMicrosecondsPerInvocation="14396" standardDeviationMircosecondsPerInvocation="2559"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.ClassDataAnalysisEngine" totalMilliseconds="39" invocations="359" avgMicrosecondsPerInvocation="110" maxMicrosecondsPerInvocation="344" standardDeviationMircosecondsPerInvocation="54"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.BuildObligationPolicyDatabase" totalMilliseconds="37" invocations="28" avgMicrosecondsPerInvocation="1336" maxMicrosecondsPerInvocation="5202" standardDeviationMircosecondsPerInvocation="1520"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.OverridingEqualsNotSymmetrical" totalMilliseconds="35" invocations="28" avgMicrosecondsPerInvocation="1270" maxMicrosecondsPerInvocation="6989" standardDeviationMircosecondsPerInvocation="1670"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.ReflectiveClasses" totalMilliseconds="33" invocations="28" avgMicrosecondsPerInvocation="1204" maxMicrosecondsPerInvocation="4643" standardDeviationMircosecondsPerInvocation="1519"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.JavaClassAnalysisEngine" totalMilliseconds="30" invocations="39" avgMicrosecondsPerInvocation="777" maxMicrosecondsPerInvocation="11435" standardDeviationMircosecondsPerInvocation="1843"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.ExplicitSerialization" totalMilliseconds="28" invocations="28" avgMicrosecondsPerInvocation="1018" maxMicrosecondsPerInvocation="12685" standardDeviationMircosecondsPerInvocation="3253"/>
+    </FindBugsProfile>
+  </FindBugsSummary>
+  <ClassFeatures></ClassFeatures>
+  <History></History>
+</BugCollection>

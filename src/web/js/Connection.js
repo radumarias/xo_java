@@ -7,6 +7,7 @@ SignalingMessageType.SDP_ANSWER = 'SDP_ANSWER';
 SignalingMessageType.ICE = 'ICE';
 SignalingMessageType.PRESENCE = 'PRESENCE';
 SignalingMessageType.CONNECTION_REQUEST = 'CONNECTION_REQUEST';
+SignalingMessageType.LAST_ICE = 'LAST_ICE';
 
 function Connection(roomId, onRoomCreated, onConnectionReady, onLocalStream, onRemoteStream, onDataMessage) {
 	this.roomId = roomId;
@@ -72,6 +73,12 @@ Connection.prototype.prepareSignalingChannel = function () {
 
 						break;
 					}
+					case SignalingMessageType.LAST_ICE:
+					{
+						self.signalingChannel.close();
+
+						break
+					}
 				}
 			},
 
@@ -102,7 +109,7 @@ Connection.prototype.sendConnectionRequest = function () {
 }
 
 Connection.prototype.prepareP2PConnection = function () {
-	var iceServers;
+	var iceServers = null;
 
 	if (!isLocalHost()) {
 		var STUN = {
@@ -158,7 +165,6 @@ Connection.prototype.prepareP2PConnection = function () {
 	};
 	this.dataChannel.onopen = function (event) {
 		self.onConnectionReady();
-		self.signalingChannel.close();
 	};
 }
 
@@ -322,9 +328,22 @@ Connection.prototype.gotIceCandidate = function (event) {
 		};
 		var self = this;
 		setTimeout(function () {
+			trace("send ice");
+
 			self.signalingChannel.send(JSON.stringify(message))
 		}, iceTimeout);
 		iceTimeout += 1000;
+	} else {
+		trace("ice null");
+
+		// todo radu
+//		// Last ICE candidate, send last indicator and close the channel.
+//		var message = {
+//			type: SignalingMessageType.LAST_ICE
+//		};
+//		this.signalingChannel.send(JSON.stringify(message))
+//
+//		this.signalingChannel.close();
 	}
 }
 

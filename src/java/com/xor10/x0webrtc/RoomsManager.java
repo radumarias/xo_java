@@ -11,14 +11,14 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class RoomsManager {
 
-	private static final RoomsManager ourInstance = new RoomsManager();
+	private static final RoomsManager INSTANCE = new RoomsManager();
 
 	private AtomicLong idGenerator = new AtomicLong();
 
 	private Map<String, Room> rooms = new HashMap<String, Room>();
 
 	public static RoomsManager getInstance() {
-		return ourInstance;
+		return INSTANCE;
 	}
 
 	public Room createRoom() {

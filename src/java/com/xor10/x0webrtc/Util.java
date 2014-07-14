@@ -12,23 +12,27 @@ import java.io.IOException;
  */
 public class Util {
 
+	private Util() {
+	}
+
 	/**
 	 * @param request
 	 * @return
 	 * @throws IOException
 	 */
 	public static String getBody(HttpServletRequest request) throws IOException {
-		StringBuffer jb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		String line;
 		try {
 			BufferedReader reader = request.getReader();
-			while ((line = reader.readLine()) != null)
-				jb.append(line);
+			while ((line = reader.readLine()) != null) {
+				sb.append(line);
+			}
 		} catch (IOException e) {
 			throw e;
 		}
 
-		return jb.toString();
+		return sb.toString();
 	}
 
 	/**
