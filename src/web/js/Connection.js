@@ -319,7 +319,7 @@ Connection.prototype.gotIceCandidate = function (event) {
 		var message = {
 			type: SignalingMessageType.ICE,
 			body: event.candidate
-		}
+		};
 		var self = this;
 		setTimeout(function () {
 			self.signalingChannel.send(JSON.stringify(message))
