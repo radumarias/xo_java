@@ -35,6 +35,8 @@ Connection.prototype.prepareSignalingChannel = function () {
 			function onOpened(channelInfo) {
 				self.roomId = channelInfo.roomId;
 
+				self.scheduleChannelClose();
+
 				self.prepareMedia();
 			},
 
@@ -80,6 +82,16 @@ Connection.prototype.prepareSignalingChannel = function () {
 			}
 	);
 	this.signalingChannel.initiate();
+}
+
+Connection.prototype.scheduleChannelClose = function () {
+	var timeout = 1000 * 60 * 10;
+	trace("scheduleChannelClose to " + timeout + " ms");
+
+	var self = this;
+	setTimeout(function () {
+		self.signalingChannel.close();
+	}, timeout);
 }
 
 Connection.prototype.sendConnectionRequest = function () {

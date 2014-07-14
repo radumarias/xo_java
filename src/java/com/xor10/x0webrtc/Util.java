@@ -1,6 +1,7 @@
 package com.xor10.x0webrtc;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 
@@ -31,12 +32,23 @@ public class Util {
 	}
 
 	/**
-	 *
 	 * @param roomId
 	 * @param memberId
 	 * @return
 	 */
-	public static final String generateChannelId(String roomId, String memberId) {
+	public static String generateChannelId(String roomId, String memberId) {
 		return String.format("%s-%s", roomId, memberId);
+	}
+
+	/**
+	 * @param resp
+	 * @param errorCode
+	 * @param message
+	 * @throws IOException
+	 */
+	public static void writeError(HttpServletResponse resp, int httpCode, String errorCode, String message) throws IOException {
+		resp.setStatus(httpCode);
+		resp.setContentType("text/html");
+		resp.getWriter().write(String.format("{ error: { code: %s, message: '%s' } }", errorCode, message));
 	}
 }

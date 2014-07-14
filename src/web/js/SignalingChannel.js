@@ -29,14 +29,15 @@ SignalingChannel.prototype.joinRoom = function () {
 	}
 
 	var self = this;
-	$.ajax({
-		url: url,
-		success: function (json) {
-			console.log("json = " + json);
-			var channelInfo = eval("(" + json + ")");
-			self.onChannelInfo(channelInfo);
-		}
-	});
+	$.get(url)
+			.done(function (json) {
+				console.log("json = " + json);
+				var channelInfo = eval("(" + json + ")");
+				self.onChannelInfo(channelInfo);
+			})
+			.fail(function (jqxhr, textStatus, error) {
+				trace("joinRoom error: [" + textStatus + "] : " + error);
+			});
 }
 
 SignalingChannel.prototype.close = function () {

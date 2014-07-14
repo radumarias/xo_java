@@ -17,12 +17,18 @@ public class TicTacToeServlet extends HttpServlet {
 		String roomId = req.getParameter("roomId");
 
 		Room room;
-		if (roomId != null) {
+		if ((roomId != null) && !roomId.isEmpty()) {
 			room = RoomsManager.getInstance().getRoom(roomId);
+
+			if (room == null) {
+				Util.writeError(resp, HttpServletResponse.SC_NOT_FOUND, "ROOM_DOESNT_EXISTS", String.format("Room [%s] doesn't exists.", roomId));
+
+				return;
+			}
 		} else {
 			room = RoomsManager.getInstance().createRoom();
 		}
-		
+
 		Member member = new Member(room.generateMemberId());
 		room.joinRoom(member);
 
