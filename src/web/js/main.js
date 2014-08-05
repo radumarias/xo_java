@@ -1,3 +1,6 @@
+var version = "1.0q1w2e3r4";
+trace("version = " + version);
+
 var roomId = ($.urlParam('roomId'));
 var isMaster = (roomId == null);
 
