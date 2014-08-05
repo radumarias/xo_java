@@ -1,4 +1,4 @@
-var iceTimeout = 3000;
+//var iceTimeout = 3000;
 
 var SignalingMessageType = {};
 
@@ -351,13 +351,14 @@ Connection.prototype.gotIceCandidate = function (event) {
 			type: SignalingMessageType.ICE,
 			body: event.candidate
 		};
-		var self = this;
-		setTimeout(function () {
-			trace("send ice");
-
-			self.signalingChannel.send(JSON.stringify(message))
-		}, iceTimeout);
-		iceTimeout += 1000;
+//		var self = this;
+//		setTimeout(function () {
+//			trace("send ice");
+//
+//			self.signalingChannel.send(JSON.stringify(message));
+//		}, iceTimeout);
+//		iceTimeout += 1000;
+		this.signalingChannel.send(JSON.stringify(message));
 	} else {
 		trace("ice null");
 
