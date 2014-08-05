@@ -112,20 +112,44 @@ Connection.prototype.prepareP2PConnection = function () {
 	var iceServers = null;
 
 	if (!isLocalHost()) {
-		var STUN = {
-			url: 'stun:stun.l.google.com:19302'
-		};
-
-//		var TURN = {
-//			url: 'turn:homeo@turn.bistri.com:80',
-//			credential: 'homeo'
+//		var STUN = {
+//			url: 'stun:stun.l.google.com:19302'
 //		};
-
+//
+////		var TURN = {
+////			url: 'turn:homeo@turn.bistri.com:80',
+////			credential: 'homeo'
+////		};
+//
+////		iceServers = {
+////			iceServers: [STUN, TURN]
+////		};
 //		iceServers = {
-//			iceServers: [STUN, TURN]
+//			iceServers: [STUN]
 //		};
 		iceServers = {
-			iceServers: [STUN]
+			iceServers: [
+				{url: "stun:23.21.150.121"},
+				{url: "stun:stun.l.google.com:19302"},
+//				{url: "turn:numb.viagenie.ca", credential: "webrtcdemo", username: "louis%40mozilla.com"},
+//				{
+//					url: 'turn:numb.viagenie.ca',
+//					credential: 'muazkh',
+//					username: 'webrtc@live.com'
+//				},
+//				{
+//					url: 'turn:192.158.29.39:3478?transport=udp',
+//					credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+//					username: '28224511:1379330808'
+//				},
+//				{
+//					url: 'turn:192.158.29.39:3478?transport=tcp',
+//					credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+//					username: '28224511:1379330808'
+//				},
+//				{url: "turn:numb.viagenie.ca:3478", credential: "q1w2e3r4", username: "radumarias%40gmail.com"},
+				{url: "turn:50.30.32.20"}
+			]
 		};
 	}
 //	{iceServers: [
