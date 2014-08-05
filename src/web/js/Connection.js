@@ -148,8 +148,8 @@ Connection.prototype.prepareP2PConnection = function () {
 //					username: '28224511:1379330808'
 //				},
 //				{url: "turn:numb.viagenie.ca:3478", credential: "q1w2e3r4", username: "radumarias%40gmail.com"},
-//				{url: "turn:50.30.32.20:3478", credential: "hero", username: "gorst"}
-//				{url: "turn:50.30.32.20:5349", credential: "hero", username: "gorst"}
+				{url: "turn:50.30.32.20:3478", credential: "hero", username: "gorst"},
+				{url: "turn:50.30.32.20:5349", credential: "hero", username: "gorst"}
 			]
 		};
 	}

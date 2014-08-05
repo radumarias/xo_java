@@ -1,4 +1,4 @@
-var version = "1.0q1w2e3r4";
+var version = "1.0";
 trace("version = " + version);
 
 var roomId = ($.urlParam('roomId'));
